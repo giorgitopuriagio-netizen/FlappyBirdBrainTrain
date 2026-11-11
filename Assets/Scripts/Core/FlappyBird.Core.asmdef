@@ -1,0 +1,5 @@
+{
+  "name": "FlappyBird.Core",
+  "rootNamespace": "FlappyBird.Core",
+  "noEngineReferences": true
+}

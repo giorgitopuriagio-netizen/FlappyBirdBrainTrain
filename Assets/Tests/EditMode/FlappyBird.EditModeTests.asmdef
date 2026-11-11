@@ -1,0 +1,6 @@
+{
+  "name": "FlappyBird.EditModeTests",
+  "references": ["FlappyBird.Core", "FlappyBird.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

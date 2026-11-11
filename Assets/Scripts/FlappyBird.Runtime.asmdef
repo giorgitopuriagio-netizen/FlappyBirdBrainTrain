@@ -1,0 +1,5 @@
+{
+  "name": "FlappyBird.Runtime",
+  "rootNamespace": "FlappyBird",
+  "references": ["FlappyBird.Core", "UnityEngine.UI"]
+}

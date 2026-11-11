@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "BeeRace Brain Lerning.sln"
+    "dotnet.defaultSolution": "FlappyBirdBrainTrain.slnx"
 }
