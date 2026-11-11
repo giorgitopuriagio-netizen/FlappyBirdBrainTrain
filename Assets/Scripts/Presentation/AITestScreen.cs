@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using FlappyBird.Core;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,15 +12,15 @@ namespace FlappyBird.Presentation
     public sealed class AITestScreen : MonoBehaviour
     {
         private BoardView board;
-        private Dropdown generations;
+        private TMP_Dropdown generations;
         private Button watchButton;
         private Button versusButton;
         private Button courseButton;
         private Button flapButton;
         private Button stopButton;
-        private Text courseLabel;
-        private Text stats;
-        private Text message;
+        private TMP_Text courseLabel;
+        private TMP_Text stats;
+        private TMP_Text message;
         private IReadOnlyList<GenerationChampion> choices = Array.Empty<GenerationChampion>();
         private bool recordedCourse;
         private double accumulator;
@@ -33,25 +34,27 @@ namespace FlappyBird.Presentation
             ui.Header("AI evaluation");
             board = BoardView.Create(ui);
             board.Pressed = QueueFlap;
-            ui.Label(ui.Root, "Generation brain", 550, 110, 620, 32, 21, UIFactory.Muted);
-            generations = ui.Dropdown(ui.Root, 550, 155, 620, SelectGeneration);
-            watchButton = ui.Button(ui.Root, "Watch bot", 550, 245, 295, 65,
+            ui.Label(ui.Root, "Choose your challenger", 560, 152, 632, 44, 32, bold: true);
+            ui.Label(ui.Root, "Saved generation", 560, 212, 632, 28, 18, UIFactory.Muted, bold: true);
+            generations = ui.Dropdown(ui.Root, 560, 250, 632, SelectGeneration);
+            ui.Label(ui.Root, "Choose a mode to start a fresh round", 560, 338, 632, 28, 18, UIFactory.Muted);
+            watchButton = ui.Button(ui.Root, "Watch bot", 560, 380, 300, 64,
                 () => BeginRound(EvaluationMode.WatchBot));
-            versusButton = ui.Button(ui.Root, "Human vs bot", 865, 245, 305, 65,
+            versusButton = ui.Button(ui.Root, "Human vs bot", 884, 380, 308, 64,
                 () => BeginRound(EvaluationMode.HumanVsBot));
-            courseButton = ui.Button(ui.Root, "Course: new", 550, 340, 620, 54, () =>
+            courseButton = ui.Button(ui.Root, "Course: new", 560, 468, 632, 54, () =>
             {
                 recordedCourse = !recordedCourse;
                 courseLabel.text = recordedCourse ? "Course: selected generation" : "Course: new";
-            }, false, 21);
-            courseLabel = courseButton.GetComponentInChildren<Text>();
-            flapButton = ui.Button(ui.Root, "Flap / Space", 550, 425, 295, 56, QueueFlap);
-            stopButton = ui.Button(ui.Root, "Stop round", 865, 425, 305, 56, StopRound);
-            stats = ui.Label(ui.Root, "", 550, 525, 620, 100, 27);
-            message = ui.Label(ui.Root, "", 550, 650, 620, 130, 21, UIFactory.Muted);
-            ui.Button(ui.Root, "Main menu", 550, 815, 620, 48, AppServices.MainMenu, false, 21);
-            ui.Label(ui.Root, "Yellow: bot. Blue: human. Press Space or tap the field to flap.",
-                60, 855, 460, 40, 17, UIFactory.Muted);
+            }, false, 20);
+            courseLabel = courseButton.GetComponentInChildren<TMP_Text>();
+            flapButton = ui.Button(ui.Root, "Flap / Space", 560, 548, 300, 56, QueueFlap);
+            stopButton = ui.Button(ui.Root, "Stop round", 884, 548, 308, 56, StopRound);
+            stats = ui.Label(ui.Root, "", 560, 636, 632, 78, 28, bold: true);
+            message = ui.Label(ui.Root, "", 560, 728, 632, 90, 19, UIFactory.Muted);
+            ui.Button(ui.Root, "Main menu", 560, 832, 632, 44, AppServices.MainMenu, false, 20);
+            ui.Label(ui.Root, "Yellow: bot  |  Blue: you  |  Space or tap to flap",
+                56, 918, 1168, 28, 18, UIFactory.Muted);
             LoadArchive();
             RefreshControls();
         }
@@ -95,14 +98,14 @@ namespace FlappyBird.Presentation
             if (selected == null)
             {
                 stats.text = "No saved brains";
-                message.text = "Train birds from the main menu first. A brain is saved when one bird remains and when its generation ends.";
+                message.text = "Start New training from the main menu. Saved birds appear here when a generation has one survivor or finishes.";
             }
             else
             {
                 stats.text = (selected.generationCompleted ? "Generation winner: " : "Last survivor: generation ") + selected.generation;
-                message.text = "Click Watch bot or Human vs bot to start the selected mode." +
-                    (!selected.generationCompleted ? "\nThis is a living survivor; its training generation is still in progress." : "") +
-                    (selected.tiedSurvivors > 1 ? "\nSeveral birds crashed on the final tick; the recorded winner was selected by the tie rule." : "");
+                message.text = "Choose a mode to start. Both birds face the same pipes." +
+                    (!selected.generationCompleted ? "\nSaved while its training generation was still running." : "") +
+                    (selected.tiedSurvivors > 1 ? "\nThe final birds tied; the training tie rule selected this winner." : "");
             }
             RefreshControls();
         }
@@ -146,8 +149,7 @@ namespace FlappyBird.Presentation
 
         private static void SetModeColor(Button button, bool selectedMode)
         {
-            button.GetComponent<Image>().color = selectedMode ? UIFactory.Green : UIFactory.Cream;
-            button.GetComponentInChildren<Text>().color = selectedMode ? Color.white : UIFactory.Ink;
+            UIFactory.Emphasize(button, selectedMode);
         }
 
         private void QueueFlap()

@@ -6,6 +6,7 @@ using FlappyBird.Core;
 using FlappyBird.Persistence;
 using FlappyBird.Presentation;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -20,7 +21,7 @@ namespace FlappyBird.Tests
         private static Button FindButton(string caption)
         {
             return UnityEngine.Object.FindObjectsByType<Button>(FindObjectsSortMode.None)
-                .Single(button => button.GetComponentInChildren<Text>()?.text == caption);
+                .Single(button => button.GetComponentInChildren<TMP_Text>()?.text == caption);
         }
 
         private static IEnumerator Capture(string name)
@@ -32,27 +33,35 @@ namespace FlappyBird.Tests
             var camera = Camera.main;
             Assert.IsNotNull(canvas);
             Assert.IsNotNull(camera);
-            var target = new RenderTexture(1280, 900, 24);
-            var pixels = new Texture2D(1280, 900, TextureFormat.RGBA32, false);
+            // Render at twice the 1280x960 layout resolution for sharp README images.
+            var target = new RenderTexture(2560, 1920, 24);
+            var pixels = new Texture2D(2560, 1920, TextureFormat.RGBA32, false);
             var previousTarget = camera.targetTexture;
             var previousActive = RenderTexture.active;
             var previousMode = canvas.renderMode;
+            var previousCamera = canvas.worldCamera;
+            var previousScale = canvas.scaleFactor;
             try
             {
                 camera.targetTexture = target;
                 canvas.renderMode = RenderMode.ScreenSpaceCamera;
                 canvas.worldCamera = camera;
                 canvas.planeDistance = 1;
+                canvas.scaleFactor = 2;
                 Canvas.ForceUpdateCanvases();
+                foreach (var label in UnityEngine.Object.FindObjectsByType<TMP_Text>(FindObjectsSortMode.None))
+                    Assert.IsFalse(label.isTextOverflowing, "Clipped interface text: " + label.text);
                 camera.Render();
                 RenderTexture.active = target;
-                pixels.ReadPixels(new Rect(0, 0, 1280, 900), 0, 0);
+                pixels.ReadPixels(new Rect(0, 0, 2560, 1920), 0, 0);
                 pixels.Apply();
                 File.WriteAllBytes(Path.Combine(output, name + ".png"), pixels.EncodeToPNG());
             }
             finally
             {
                 canvas.renderMode = previousMode;
+                canvas.worldCamera = previousCamera;
+                canvas.scaleFactor = previousScale;
                 camera.targetTexture = previousTarget;
                 RenderTexture.active = previousActive;
                 UnityEngine.Object.Destroy(pixels);
@@ -71,7 +80,7 @@ namespace FlappyBird.Tests
             yield return null;
             yield return null;
             Assert.IsNotNull(FindButton("New training"));
-            Assert.IsNotNull(FindButton("AI evaluation / Human vs bot"));
+            Assert.IsNotNull(FindButton("Evaluate AI"));
             Assert.IsNotNull(UnityEngine.Object.FindFirstObjectByType<BoardView>());
             yield return Capture("01-main-menu");
 
@@ -85,6 +94,11 @@ namespace FlappyBird.Tests
             float deadline = Time.realtimeSinceStartup + 12;
             while (session.Generation < 2 && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.GreaterOrEqual(session.Generation, 2, "Training did not advance.");
+            FindButton("\u00d71").onClick.Invoke();
+            // Capture the real population after the first pipes enter the field.
+            for (int i = 0; i < 180; i++) session.Tick();
+            yield return null;
+            yield return Capture("02-training-live");
             FindButton("Stop and save").onClick.Invoke();
             string stopped = JsonUtility.ToJson(session.Capture());
             yield return new WaitForSecondsRealtime(0.1f);
@@ -97,7 +111,7 @@ namespace FlappyBird.Tests
             yield return null;
             yield return null;
             Assert.AreEqual("AITest", SceneManager.GetActiveScene().name);
-            var dropdowns = UnityEngine.Object.FindObjectsByType<Dropdown>(FindObjectsSortMode.None);
+            var dropdowns = UnityEngine.Object.FindObjectsByType<TMP_Dropdown>(FindObjectsSortMode.None);
             Assert.AreEqual(1, dropdowns.Length, "Evaluation should have a single generation-brain list.");
             Assert.IsTrue(dropdowns.All(dropdown => dropdown.options.Count > 0));
             dropdowns[0].Show();
@@ -122,7 +136,7 @@ namespace FlappyBird.Tests
             FindButton("Flap / Space").onClick.Invoke();
             yield return new WaitForSecondsRealtime(0.2f);
             Assert.IsFalse(hint.activeSelf);
-            Assert.IsTrue(UnityEngine.Object.FindObjectsByType<Text>(FindObjectsSortMode.None).Any(text => text.text.Contains("Human:")));
+            Assert.IsTrue(UnityEngine.Object.FindObjectsByType<TMP_Text>(FindObjectsSortMode.None).Any(text => text.text.Contains("Human:")));
             yield return new WaitForSecondsRealtime(0.4f);
             FindButton("Flap / Space").onClick.Invoke();
             yield return new WaitForSecondsRealtime(0.6f);

@@ -1,17 +1,35 @@
 # Flappy Bird Brain Train
 
-A Unity **6000.3.8f1** project that trains Flappy Bird agents with a neural network and a genetic algorithm.
+**A Flappy Bird game where the birds learn to fly.** Train a population of 200 agents,
+save each generation's best bird, then watch it play or challenge it yourself.
+
+Built with **Unity 6 · C# · Neural networks · Genetic algorithms**.
+
+![Flappy Bird Brain Train main menu](Docs/Images/main-menu.png)
 
 ## Overview
 
-This Unity project combines a Flappy Bird-style game with an AI training system.
-Birds learn to survive by evolving the weights of a feed-forward neural network
-with a genetic algorithm. A saved agent can then play independently or compete
-against a human on the same course.
+The AI learns by evolving the weights of a feed-forward neural network. Every bird
+in a generation faces the same pipes. The strongest genomes survive selection,
+combine, and mutate to form the next population.
 
-The project demonstrates a shared deterministic simulation, neural-network
-inference, population-based optimization, persistent training state, and a
-separation between game logic, presentation, and storage.
+- **Train from scratch or continue:** restore the full simulation, population, and random state.
+- **Watch or compete:** choose an archived generation, launch a bot round, or play Human vs bot.
+- **Fair physical rules:** training, bots, and human input all use the same fixed-step simulation.
+- **Inspect the implementation:** plain C# game logic, a 6 → 12 → 8 → 1 network, and a genetic algorithm with elitism, tournament selection, crossover, and mutation.
+- **Readable presentation:** scalable TextMeshPro text, clear status cards, and the classic pixel-art field.
+
+The project focuses on game AI, deterministic simulation, and separation of
+game logic, presentation, and persistence. No machine-learning service is required.
+
+## In-game previews
+
+| Training | Human vs bot |
+| --- | --- |
+| ![Training statistics, saved progress, and simulation speed controls](Docs/Images/training.png) | ![A human and a saved AI agent playing on the same course](Docs/Images/human-vs-bot.png) |
+
+Open an image to inspect the full **2560 × 1920** capture. These are screenshots
+rendered by Unity from the project, with a separate layout for training and evaluation.
 
 ## Getting started
 
@@ -20,7 +38,7 @@ separation between game logic, presentation, and storage.
 1. Open the project in Unity Hub with the specified editor version.
 2. Open [MainMenu.unity](Assets/Scenes/MainMenu.unity) and press **Play**.
    Alternatively, select **Flappy Bird > Open Main Menu** in the editor menu.
-3. Use the main menu to start training, continue training, or evaluate an agent.
+3. Choose **New training**, **Continue training**, or **Evaluate AI**.
 
 To create a Windows build, select **Flappy Bird > Build Windows**. The output is
 `Builds/Windows/FlappyBird.exe`. Keep its data directory and runtime files beside
@@ -47,7 +65,7 @@ Scenes are **MainMenu**, **Training**, and **AITest**, with MainMenu first in Bu
 4. Click **Stop and save**. The simulation stops and writes a full checkpoint.
    Click **Evaluate AI** to open the saved-brain evaluation scene.
 
-5. Choose an agent from **Generation brain**. The list includes archived generations
+5. Choose an agent from **Saved generation**. The list includes archived generations
    from all saved runs. If generation numbers repeat, a run number distinguishes
    the options; run 1 is the newest archived run.
 
@@ -199,7 +217,9 @@ archived winner, scene transitions, direct mode launches, repeated switching,
 restart after completion, the first-flap gate, and the score/hint regression.
 Tests use isolated temporary save directories instead of the user's training.
 
-Play Mode tests write preview images to `TestResults/Previews`.
+Play Mode tests also check that visible interface text fits its bounds and write
+2560 × 1920 preview images to `TestResults/Previews`. The selected documentation
+images are stored in `Docs/Images` so they are visible in a fresh GitHub checkout.
 
 To run core checks outside Unity, use .NET SDK 10 from the project root:
 
@@ -217,7 +237,17 @@ The Unity game itself does not require that external .NET SDK.
 
 ## Assets and attribution
 
-The original project atlas is retained at Assets/Resources/FlappyAtlas.png. Its original .png file contained WebP and was converted to a true PNG with identical decoded RGBA pixels. Old bee artwork, unused prefabs, the sample scene, and unused scripts were removed. Attribution and rights remain those of the original asset.
+The classic pixel-art atlas is retained at `Assets/Resources/FlappyAtlas.png`.
+It is a true PNG imported without texture compression or mipmaps, with point
+filtering. At the 1280 × 960 reference layout, each source pixel covers a 3 × 3
+display area. The UI uses a pixel-aligned canvas and a signed-distance-field font
+so text scales cleanly while the game retains its pixel-art appearance.
+
+The atlas came with the original project; its attribution and rights remain
+those of its original creator. This project is an independent learning exercise.
+The Liberation Sans font and its SIL Open Font License are included under
+`Assets/TextMesh Pro/Fonts`. TextMeshPro resources and shaders come from the
+Unity UI package's Essential Resources.
 
 ## Further reading
 

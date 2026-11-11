@@ -34,8 +34,10 @@ namespace FlappyBird.Presentation
 
         public static BoardView Create(UIFactory ui)
         {
-            var rect = UIFactory.Rect("Flappy Bird field", ui.Root, 60, 100, 288, 512);
-            rect.localScale = Vector3.one * 1.45f;
+            ui.Panel(ui.Root, 52, 124, 440, 776, UIFactory.Ink);
+            var rect = UIFactory.Rect("Flappy Bird field", ui.Root, 56, 128, 288, 512);
+            // One atlas pixel occupies exactly three display pixels at the reference resolution.
+            rect.localScale = Vector3.one * 1.5f;
             rect.gameObject.AddComponent<RectMask2D>();
             var view = rect.gameObject.AddComponent<BoardView>();
             view.Initialize();

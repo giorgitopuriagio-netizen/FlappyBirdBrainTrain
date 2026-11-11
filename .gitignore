@@ -6,6 +6,7 @@
 /[Bb]uild/
 /[Bb]uilds/
 /TestResults/
+/Assets/Resources/PerformanceTestRun*.json*
 /.vs/
 **/bin/
 **/obj/

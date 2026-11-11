@@ -1,5 +1,5 @@
 {
   "name": "FlappyBird.PlayModeTests",
-  "references": ["FlappyBird.Core", "FlappyBird.Runtime", "UnityEngine.UI"],
+  "references": ["FlappyBird.Core", "FlappyBird.Runtime", "UnityEngine.UI", "Unity.TextMeshPro"],
   "optionalUnityReferences": ["TestAssemblies"]
 }

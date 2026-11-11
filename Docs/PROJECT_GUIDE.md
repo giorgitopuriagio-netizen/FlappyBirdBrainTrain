@@ -12,7 +12,7 @@ This project teaches Flappy Bird agents to survive by evolving the weights of a 
 
 SceneEntry creates the appropriate screen controller. AppServices supplies the repository and carries the active TrainingSession across scene transitions. It does not hold global bird-death counters or a shared target list.
 
-Evaluation has one brain dropdown containing all archived runs. When generation numbers repeat across runs, options include a run number; run 1 is the newest archived run. Changing the brain or course requires stopping the active round. The two mode buttons stay available and create a fresh round immediately, including when restarting the same mode.
+Evaluation has one Saved generation dropdown containing all archived runs. When generation numbers repeat across runs, options include a run number; run 1 is the newest archived run. Changing the brain or course requires stopping the active round. The two mode buttons stay available and create a fresh round immediately, including when restarting the same mode.
 
 ## Round state and input
 
@@ -117,6 +117,8 @@ Existing checkpoints and generation archives retain their format and remain comp
 | Tests/CoreChecks | Standalone checks of physics, networks, evolution, continuation, and evaluation state transitions. |
 
 BoardView samples the original pixel atlas with UV rectangles. Digit 1 and the pointing hand have separate rectangles and lifecycles. Input and rendering are separate from simulation so bot and human controllers share physical rules.
+
+UIFactory creates a 1280 by 960 reference layout with a pixel-aligned canvas. The game field uses 1.5 times its logical size, so each atlas pixel spans exactly three screen pixels at the reference resolution. Point filtering, no mipmaps, and uncompressed texture import preserve the source artwork. Interface labels use the included Liberation Sans TextMeshPro SDF font, which scales independently of the pixel art. Training metrics have separate cards, and the chosen training speed and evaluation mode are highlighted. Documentation captures render the actual interface at twice the reference resolution.
 
 ## Verification and building
 
